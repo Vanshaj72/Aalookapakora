@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Special Peace Offering ✨</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Sacramento&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --glow-color: #ff758c;
+      --accent-cyan: #38bdf8;
+      --accent-purple: #c084fc;
+      --bg-dark: #090d16;
+      --card-bg: rgba(22, 27, 38, 0.75);
+      --text-main: #f1f5f9;
+      --text-sub: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      overflow-x: hidden;
+      padding-bottom: 80px;
+      position: relative;
+    }
+
+    /* AMBIENT GLOW SPHERES */
+    .glow-sphere-1 {
+      position: fixed;
+      top: -10%;
+      left: -10%;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(255, 117, 140, 0.25) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .glow-sphere-2 {
+      position: fixed;
+      bottom: 10%;
+      right: -10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* GLASS CARDS */
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-card:hover {
+      border-color: rgba(255, 117, 140, 0.4);
+      box-shadow: 0 10px 30px rgba(255, 117, 140, 0.2);
+    }
+
+    /* 1. HERO SECTION */
+    .hero {
+      min-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px;
+      background: radial-gradient(circle at center, #1e293b 0%, var(--bg-dark) 100%);
+      position: relative;
+    }
+
+    .cursive-title {
+      font-family: 'Sacramento', cursive;
+      font-size: 3.5rem;
+      color: var(--glow-color);
+      margin-bottom: 5px;
+      text-shadow: 0 0 20px rgba(255, 117, 140, 0.6);
+    }
+
+    .hero h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, #ffffff, var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--text-sub);
+      max-width: 520px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .audio-btn {
+      background: linear-gradient(135deg, var(--glow-color), var(--accent-purple));
+      color: white;
+      border: none;
+      padding: 16px 36px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(255, 117, 140, 0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .audio-btn:active {
+      transform: scale(0.95);
+    }
+
+    .scroll-hint {
+      margin-top: 40px;
+      font-size: 0.9rem;
+      color: var(--accent-cyan);
+      letter-spacing: 1px;
+      animation: bounce 2s infinite;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-8px); }
+      60% { transform: translateY(-4px); }
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin: 60px 0 25px 0;
+    }
+
+    .section-header h2 {
+      font-size: 1.9rem;
+      color: var(--text-main);
+      font-weight: 800;
+    }
+
+    .section-header p {
+      color: var(--accent-cyan);
+      font-size: 0.92rem;
+      margin-top: 6px;
+      font-weight: 600;
+    }
+
+    /* LETTER */
+    .letter-text {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #e2e8f0;
+      white-space: pre-line;
+    }
+
+    /* FLIP CARDS */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .flip-card {
+      height: 180px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+      border-radius: 20px;
+    }
+
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .flip-card-front {
+      background: var(--card-bg);
+      color: var(--accent-cyan);
+      font-weight: 700;
+      font-size: 1.15rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    .flip-card-front span {
+      position: absolute;
+      bottom: 12px;
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      font-weight: 400;
+    }
+
+    .flip-card-back {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: #f8fafc;
+      transform: rotateY(180deg);
+      font-size: 0.98rem;
+      line-height: 1.6;
+      border-color: var(--glow-color);
+      box-shadow: 0 0 20px rgba(255, 117, 140, 0.3);
+    }
+
+    /* CLEAN PHOTO GALLERY */
+    .photo-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 18px;
+      margin-top: 10px;
+    }
+
+    .photo-frame {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .photo-frame:hover {
+      transform: scale(1.03);
+      border-color: var(--glow-color);
+    }
+
+    .photo-frame img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      display: block;
+      border-radius: 16px;
+    }
+
+    /* REASONS LIST */
+    .reason-item {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      margin-bottom: 22px;
+    }
+
+    .reason-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .reason-icon {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      flex-shrink: 0;
+      font-size: 1.1rem;
+    }
+
+    .reason-content h4 {
+      color: var(--text-main);
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .reason-content p {
+      color: var(--text-sub);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* VIBE CHECK SELECTOR */
+    .vibe-grid {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    .vibe-chip {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 10px 18px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+
+    .vibe-chip:hover {
+      background: rgba(255, 117, 140, 0.2);
+      border-color: var(--glow-color);
+      transform: translateY(-2px);
+    }
+
+    .vibe-response {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 1rem;
+      color: var(--accent-cyan);
+      font-weight: 600;
+      min-height: 24px;
+    }
+
+    /* POPPER GAME */
+    .pop-game {
+      text-align: center;
+    }
+
+    .pop-counter {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent-purple);
+      margin-bottom: 15px;
+    }
+
+    .pop-btn {
+      background: rgba(192, 132, 252, 0.2);
+      border: 1px solid var(--accent-purple);
+      color: white;
+      padding: 12px 26px;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .pop-btn:active {
+      transform: scale(0.9);
+    }
+
+    /* FORGIVENESS METER */
+    .meter-section {
+      text-align: center;
+      padding: 45px 20px;
+      background: radial-gradient(circle, rgba(255, 117, 140, 0.15) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 117, 140, 0.4);
+      margin-top: 50px;
+      box-shadow: 0 0 35px rgba(255, 117, 140, 0.2);
+    }
+
+    .forgive-btn {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+      border: none;
+      padding: 18px 45px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(34, 197, 94, 0.5);
+      margin-top: 20px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .forgive-btn:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-sphere-1"></div>
+  <div class="glow-sphere-2"></div>
+
+  <audio id="bg-music" loop preload="auto">
+    <source src="music.mp3" type="audio/mpeg">
+    <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+  </audio>
+
+  <section class="hero">
+    <div class="cursive-title">Yo my Lil cornball...</div>
+    <h1>A Custom Peace Offering ✨</h1>
+    <p>I know I have a habit of disappearing into my own world sometimes! I coded this page for you as a chill peace offering.</p>
+    
+    <button class="audio-btn" id="audio-toggle-btn" onclick="toggleAudio()">
+      <span>🎵</span> <span id="btn-text">Tap for Audio</span>
+    </button>
+
+    <div class="scroll-hint">
+      👇 Scroll down to explore
+    </div>
+  </section>
+
+  <div class="container">
+
+    <div class="section-header">
+      <h2>💌 Quick Note</h2>
+      <p>💡 READ THIS FIRST</p>
+    </div>
+
+    <div class="glass-card">
+      <div class="letter-text">
+        Alright, so I do this always... disappearing for 2-3 days without leaving a trace! Sorry again for being super inactive.
+
+        Life and random stuff got busy, but having cool online friends like you is top-tier. I made this custom site to bring a smile to your face today!
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h2>🔒 The Vault of Casual Facts</h2>
+      <p>✨ TAP ANY CARD TO REVEAL THE BACK</p>
+    </div>
+
+    <div class="grid-container">
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            The Classic Habit ⏱️
+            <span>(Tap to flip)</span>
+          </div>
+          <div class="flip-card-back">"I do this always, sorry again!" My response speed randomly hits 0%, but back at 100% now.</div>
+        </div>
+      </div>
+
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            Random Hot Take 🔥
+            <span>(Tap to flip)</span>
+          </div>
+          <div class="flip-card-back">Taking 3 days to reply is almost as bad as spoiling a movie ending, but here we are!</div>
+        </div>
+      </div>
+
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            The Vibe Pass 🎟️
+            <span>(Tap to flip)</span>
+          </div>
+          <div class="flip-card-back">This pass lets you pick the next song, game, or random debate topic whenever we chat!</div>
+        </div>
+      </div>
+
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            Unmatched Energy 🌟
+            <span>(Tap to flip)</span>
+          </div>
+          <div class="flip-card-back">Honestly, genuine online friends are rare. Glad we stay connected!</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h2>📸 Photo Gallery</h2>
+      <p>💡 FULLY VISIBLE DISPLAY</p>
+    </div>
+
+    <div class="photo-gallery">
+      <div class="photo-frame">
+        <img src="photo1.jpg" alt="Photo 1" onerror="this.src='https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&q=80'">
+      </div>
+      <div class="photo-frame">
+        <img src="photo2.jpg" alt="Photo 2" onerror="this.src='https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=500&q=80'">
+      </div>
+      <div class="photo-frame">
+        <img src="photo3.jpg" alt="Photo 3" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=500&q=80'">
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h2>⚡ Current Mood Check</h2>
+      <p>✨ TAP HOW YOU'RE FEELING</p>
+    </div>
+
+    <div class="glass-card">
+      <div class="vibe-grid">
+        <div class="vibe-chip" onclick="setVibe('Chill 😎', 'Nice, keeping it relaxed as always!')">😎 Chill</div>
+        <div class="vibe-chip" onclick="setVibe('Sassy 🙄', 'Valid! I deserved a little side-eye for taking 3 days.')">🙄 Still Annoyed</div>
+        <div class="vibe-chip" onclick="setVibe('Hyped 🎉', 'Let\'s go! Time to start the chat again!')">🎉 Hyped</div>
+        <div class="vibe-chip" onclick="setVibe('Sleepy 😴', 'Go grab some sleep or coffee first!')">😴 Sleepy</div>
+      </div>
+      <div class="vibe-response" id="vibe-text">Select a mood above...</div>
+    </div>
+
+    <div class="section-header">
+      <h2>✨ Why You're Cool</h2>
+      <p>💡 JUST A FEW FACTS</p>
+    </div>
+
+    <div class="glass-card">
+      <div class="reason-item">
+        <div class="reason-icon">1</div>
+        <div class="reason-content">
+          <h4>Matchless Humor</h4>
+          <p>You actually get my random jokes and memes without any long explanations needed.</p>
+        </div>
+      </div>
+
+      <div class="reason-item">
+        <div class="reason-icon">2</div>
+        <div class="reason-content">
+          <h4>Great Vibe</h4>
+          <p>No matter what topic comes up, chatting with you is always super chill and fun.</p>
+        </div>
+      </div>
+
+      <div class="reason-item">
+        <div class="reason-icon">3</div>
+        <div class="reason-content">
+          <h4>Super Patient</h4>
+          <p>Even when I take forever to reply, you never make it a big deal.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h2>🎉 Peace Offering Popper</h2>
+      <p>💡 TAP THE BUTTON FOR GOOD VIBES</p>
+    </div>
+
+    <div class="glass-card pop-game">
+      <div class="pop-counter" id="pop-count">Hearts Sent: 0 💖</div>
+      <button class="pop-btn" onclick="sendHeart()">Tap to Send Love ✨</button>
+    </div>
+
+    <div class="meter-section">
+      <h2 style="color: var(--glow-color); margin-bottom: 10px; font-size: 2rem;">Official Verdict ⚖️</h2>
+      <p style="color: var(--text-sub);">Will you clear my absence record?</p>
+      <button class="forgive-btn" onclick="triggerForgiveness()">Forgive Me? 💚</button>
+    </div>
+
+  </div>
+
+  <script>
+    let hearts = 0;
+
+    function toggleAudio() {
+      const music = document.getElementById('bg-music');
+      const btn = document.getElementById('audio-toggle-btn');
+      const btnText = document.getElementById('btn-text');
+
+      if (music.paused) {
+        music.play().then(() => {
+          btnText.innerText = "Pause Music";
+          btn.style.background = "linear-gradient(135deg, #22c55e, #16a34a)";
+        }).catch((err) => {
+          btnText.innerText = "Playing Fallback...";
+        });
+      } else {
+        music.pause();
+        btnText.innerText = "Tap for Audio";
+        btn.style.background = "linear-gradient(135deg, var(--glow-color), var(--accent-purple))";
+      }
+    }
+
+    function setVibe(mood, msg) {
+      document.getElementById('vibe-text').innerText = `${mood}: ${msg}`;
+    }
+
+    function sendHeart() {
+      hearts++;
+      document.getElementById('pop-count').innerText = `Hearts Sent: ${hearts} 💖`;
+      confetti({
+        particleCount: 25,
+        spread: 60,
+        origin: { y: 0.8 }
+      });
+    }
+
+    function triggerForgiveness() {
+      confetti({
+        particleCount: 180,
+        spread: 100,
+        origin: { y: 0.6 }
+      });
+      alert("Status: Forgiven! Thank you so much! 🎉✨");
+    }
+  </script>
+</body>
+</html>
